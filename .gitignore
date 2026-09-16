@@ -17,3 +17,6 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+
+# Local deploy secrets (workspace root / copies)
+deploy.env

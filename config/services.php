@@ -2,6 +2,6 @@
 
 return [
     'plantnet' => [
-        'key' => env('PLANTNET_API_KEY'),
+        'key' => trim((string) env('PLANTNET_API_KEY', '')),
     ],
 ];

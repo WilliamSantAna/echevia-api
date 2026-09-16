@@ -19,6 +19,8 @@ class PlantNetService
             throw new PlantNetException('A chave da API Pl@ntNet não está configurada.', 500);
         }
 
+        $apiKey = trim($apiKey);
+
         $filename = $image->getClientOriginalName() ?: 'planta.jpg';
         $path = $image->getRealPath();
 
@@ -53,7 +55,7 @@ class PlantNetService
         }
 
         if (in_array($response->status(), [401, 403], true)) {
-            throw new PlantNetException('A chave da API Pl@ntNet foi recusada.', $response->status());
+            throw new PlantNetException($this->authFailureMessage($response->json('message')), $response->status());
         }
 
         if ($response->status() === 429) {
@@ -119,5 +121,22 @@ class PlantNetService
         }
 
         return null;
+    }
+
+    private function authFailureMessage(mixed $message): string
+    {
+        $text = is_string($message) ? strtolower($message) : '';
+
+        if (str_contains($text, 'remote ip not allowed')) {
+            return 'A Pl@ntNet bloqueou o IP deste servidor. Na conta da Pl@ntNet (API key), desmarque “Expose my API key” para o backend consultar, ou autorize o IP da hospedagem.';
+        }
+
+        if (str_contains($text, 'origin not allowed')) {
+            return 'A Pl@ntNet recusou a origem desta requisição. A identificação deve passar pelo backend da Echevia.';
+        }
+
+        return is_string($message) && $message !== ''
+            ? $message
+            : 'A chave da API Pl@ntNet foi recusada.';
     }
 }

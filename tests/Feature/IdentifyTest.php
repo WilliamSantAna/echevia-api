@@ -40,4 +40,24 @@ class IdentifyTest extends TestCase
             ->assertJsonPath('matches.0.scientificName', 'Echeveria elegans')
             ->assertJsonPath('matches.0.family', 'Crassulaceae');
     }
+
+    public function test_identify_explains_plantnet_ip_block(): void
+    {
+        Http::fake([
+            'my-api.plantnet.org/*' => Http::response([
+                'message' => 'error: remote IP not allowed',
+            ], 403),
+        ]);
+
+        $file = UploadedFile::fake()->create('planta.jpg', 120, 'image/jpeg');
+
+        $this->post('/api/identify', ['image' => $file], [
+            'Accept' => 'application/json',
+        ])
+            ->assertForbidden()
+            ->assertJsonPath(
+                'message',
+                'A Pl@ntNet bloqueou o IP deste servidor. Na conta da Pl@ntNet (API key), desmarque “Expose my API key” para o backend consultar, ou autorize o IP da hospedagem.',
+            );
+    }
 }
