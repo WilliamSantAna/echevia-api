@@ -16,7 +16,7 @@ class PlantNetService
         $apiKey = config('services.plantnet.key');
 
         if (! is_string($apiKey) || $apiKey === '') {
-            throw new PlantNetException('A chave da API Pl@ntNet não está configurada.', 500);
+            throw new PlantNetException('A chave da API PlantNet não está configurada.', 500);
         }
 
         $apiKey = trim($apiKey);
@@ -37,7 +37,7 @@ class PlantNetService
         $query = http_build_query([
             'api-key' => $apiKey,
             'lang' => 'pt',
-            'nb-results' => 8,
+            'nb-results' => 2,
             'include-related-images' => 'true',
         ]);
 
@@ -62,12 +62,12 @@ class PlantNetService
         }
 
         if ($response->status() === 429) {
-            throw new PlantNetException('Limite de identificações da Pl@ntNet atingido. Tente mais tarde.', 429);
+            throw new PlantNetException('Limite de identificações da PlantNet atingido. Tente mais tarde.', 429);
         }
 
         if ($response->failed()) {
             throw new PlantNetException(
-                $response->json('message') ?: 'A Pl@ntNet não conseguiu identificar esta foto.',
+                $response->json('message') ?: 'A PlantNet não conseguiu identificar esta foto.',
                 $response->serverError() ? 502 : $response->status(),
             );
         }
@@ -104,7 +104,7 @@ class PlantNetService
             );
         }
 
-        return $matches;
+        return array_slice($matches, 0, 2);
     }
 
     private function relatedImageUrl(mixed $url): ?string
@@ -131,15 +131,15 @@ class PlantNetService
         $text = is_string($message) ? strtolower($message) : '';
 
         if (str_contains($text, 'remote ip not allowed')) {
-            return 'A Pl@ntNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.';
+            return 'A PlantNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.';
         }
 
         if (str_contains($text, 'origin not allowed')) {
-            return 'A Pl@ntNet recusou a origem. Em Authorized domains use exatamente https://marketingcriativa.com.br/ (com a barra no final).';
+            return 'A PlantNet recusou a origem. Em Authorized domains use exatamente https://marketingcriativa.com.br/ (com a barra no final).';
         }
 
         return is_string($message) && $message !== ''
             ? $message
-            : 'A chave da API Pl@ntNet foi recusada.';
+            : 'A chave da API PlantNet foi recusada.';
     }
 }

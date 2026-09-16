@@ -1,6 +1,6 @@
 # Echevia API
 
-Backend Laravel **11.55.1** da Echevia. A identificação de espécies por foto passa por aqui e a API chama a Pl@ntNet no servidor, para o navegador não bater no CORS (`Origin not allowed` em `127.0.0.1` vs `localhost`).
+Backend Laravel **11.55.1** da Echevia. A identificação de espécies por foto passa por aqui e a API chama a PlantNet no servidor, para o navegador não bater no CORS (`Origin not allowed` em `127.0.0.1` vs `localhost`).
 
 ## Hospedagem (HostGator)
 
@@ -37,7 +37,7 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 No `.env`:
 
-- `PLANTNET_API_KEY` — chave da Pl@ntNet
+- `PLANTNET_API_KEY` — chave da PlantNet
 - `CORS_ALLOWED_ORIGINS` — origens do Vite (`http://127.0.0.1:5173`, `http://localhost:5173`) e o domínio de produção
 - `DB_DATABASE=marke047_echevia` (usuário/senha do cPanel; a identificação ainda não usa o banco)
 
@@ -49,4 +49,4 @@ No `.env`:
 | GET | `/` | Nome da API |
 | POST | `/api/identify` | Multipart `image` (jpg/png, até 10 MB). Resposta: `{ "matches": [...] }` |
 
-A chave da Pl@ntNet não sai no frontend.
+A chave da PlantNet não sai no frontend.

@@ -27,6 +27,24 @@ class IdentifyTest extends TestCase
                         ],
                         'images' => [],
                     ],
+                    [
+                        'score' => 0.44,
+                        'species' => [
+                            'scientificNameWithoutAuthor' => 'Echeveria peacockii',
+                            'commonNames' => ['Echeveria pavão'],
+                            'family' => ['scientificNameWithoutAuthor' => 'Crassulaceae'],
+                        ],
+                        'images' => [],
+                    ],
+                    [
+                        'score' => 0.12,
+                        'species' => [
+                            'scientificNameWithoutAuthor' => 'Sedum morganianum',
+                            'commonNames' => ['Rabo de burro'],
+                            'family' => ['scientificNameWithoutAuthor' => 'Crassulaceae'],
+                        ],
+                        'images' => [],
+                    ],
                 ],
             ], 200),
         ]);
@@ -38,7 +56,9 @@ class IdentifyTest extends TestCase
         ])
             ->assertOk()
             ->assertJsonPath('matches.0.scientificName', 'Echeveria elegans')
-            ->assertJsonPath('matches.0.family', 'Crassulaceae');
+            ->assertJsonPath('matches.0.family', 'Crassulaceae')
+            ->assertJsonPath('matches.1.scientificName', 'Echeveria peacockii')
+            ->assertJsonCount(2, 'matches');
     }
 
     public function test_identify_explains_plantnet_ip_block(): void
@@ -57,7 +77,7 @@ class IdentifyTest extends TestCase
             ->assertForbidden()
             ->assertJsonPath(
                 'message',
-                'A Pl@ntNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.',
+                'A PlantNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.',
             );
     }
 
