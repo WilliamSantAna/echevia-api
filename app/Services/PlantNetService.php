@@ -41,7 +41,10 @@ class PlantNetService
             'include-related-images' => 'true',
         ]);
 
+        $origin = (string) config('services.plantnet.origin');
+
         $response = Http::timeout(45)
+            ->withHeaders($origin !== '' ? ['Origin' => $origin] : [])
             ->attach('images', $contents, $filename)
             ->post('https://my-api.plantnet.org/v2/identify/all?'.$query, [
                 'organs' => 'auto',
@@ -128,11 +131,11 @@ class PlantNetService
         $text = is_string($message) ? strtolower($message) : '';
 
         if (str_contains($text, 'remote ip not allowed')) {
-            return 'A Pl@ntNet bloqueou o IP deste servidor. Na conta da Pl@ntNet (API key), desmarque “Expose my API key” para o backend consultar, ou autorize o IP da hospedagem.';
+            return 'A Pl@ntNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.';
         }
 
         if (str_contains($text, 'origin not allowed')) {
-            return 'A Pl@ntNet recusou a origem desta requisição. A identificação deve passar pelo backend da Echevia.';
+            return 'A Pl@ntNet recusou a origem. Em Authorized domains use exatamente https://marketingcriativa.com.br/ (com a barra no final).';
         }
 
         return is_string($message) && $message !== ''

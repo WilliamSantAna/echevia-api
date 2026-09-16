@@ -57,7 +57,37 @@ class IdentifyTest extends TestCase
             ->assertForbidden()
             ->assertJsonPath(
                 'message',
-                'A Pl@ntNet bloqueou o IP deste servidor. Na conta da Pl@ntNet (API key), desmarque “Expose my API key” para o backend consultar, ou autorize o IP da hospedagem.',
+                'A Pl@ntNet bloqueou o IP deste servidor. Como a identificação passa pelo backend, desmarque “Expose my API key” ou autorize o IPv4 da hospedagem em Authorized IPs.',
             );
+    }
+
+    public function test_identify_sends_site_origin_to_plantnet(): void
+    {
+        Http::fake([
+            'my-api.plantnet.org/*' => Http::response([
+                'results' => [
+                    [
+                        'score' => 0.8,
+                        'species' => [
+                            'scientificNameWithoutAuthor' => 'Echeveria elegans',
+                            'commonNames' => ['Rosa de alabastro'],
+                            'family' => ['scientificNameWithoutAuthor' => 'Crassulaceae'],
+                        ],
+                        'images' => [],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $file = UploadedFile::fake()->create('planta.jpg', 120, 'image/jpeg');
+
+        $this->post('/api/identify', ['image' => $file], [
+            'Accept' => 'application/json',
+        ])->assertOk();
+
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), 'my-api.plantnet.org')
+                && $request->hasHeader('Origin', 'https://marketingcriativa.com.br/');
+        });
     }
 }
