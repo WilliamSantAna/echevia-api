@@ -1,5 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /clientes/echevia/echevia-api/
+
+    # Pedidos que já estão em public/ não devem ser prefixados de novo.
+    RewriteRule ^public($|/) - [L]
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
