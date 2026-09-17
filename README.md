@@ -39,7 +39,7 @@ No `.env`:
 
 - `PLANTNET_API_KEY` — chave da PlantNet
 - `CORS_ALLOWED_ORIGINS` — origens do Vite (`http://127.0.0.1:5173`, `http://localhost:5173`) e o domínio de produção
-- `DB_DATABASE=marke047_echevia` (usuário/senha do cPanel; a identificação ainda não usa o banco)
+- `DB_DATABASE=marke047_echevia` (usuário/senha do cPanel)
 - `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — token S3 do R2
 - `R2_BUCKET=echevia-media`
 - `R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com`
@@ -88,5 +88,12 @@ O `r2.dev` é limitado e pensado para desenvolvimento. Depois dá para ligar um 
 | GET | `/up` | Health check Laravel |
 | GET | `/` | Nome da API |
 | POST | `/api/identify` | Multipart `image` (jpg/png, até 10 MB). Resposta: `{ "matches": [...] }` |
+| GET | `/api/plants` | Lista plantas com fotos e vídeos (`{ "plants": [...] }`) |
+| POST | `/api/plants` | Cria planta (JSON, mesmos campos do app) |
+| GET | `/api/plants/{id}` | Uma planta |
+| POST | `/api/plants/{id}` | Atualiza planta e mídias |
+| POST | `/api/plants/{id}/favorite` | `{ "favorite": true }` |
+| POST | `/api/plants/{id}/delete` | Remove planta e arquivos do R2 |
+| POST | `/api/media` | Multipart `file` + `kind=photo\|video`. Grava no R2 e devolve `{ "url", "key" }` |
 
 A chave da PlantNet não sai no frontend.

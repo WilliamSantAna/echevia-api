@@ -31,5 +31,8 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="R2_BUCKET" value="echevia-media"/>
+        <env name="R2_REGION" value="auto"/>
+        <env name="R2_URL" value="https://r2.test"/>
     </php>
 </phpunit>
