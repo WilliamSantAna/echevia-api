@@ -40,6 +40,46 @@ No `.env`:
 - `PLANTNET_API_KEY` — chave da PlantNet
 - `CORS_ALLOWED_ORIGINS` — origens do Vite (`http://127.0.0.1:5173`, `http://localhost:5173`) e o domínio de produção
 - `DB_DATABASE=marke047_echevia` (usuário/senha do cPanel; a identificação ainda não usa o banco)
+- `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — token S3 do R2
+- `R2_BUCKET=echevia-media`
+- `R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com`
+- `R2_URL` — URL pública do bucket (`https://pub-….r2.dev` ou domínio próprio), sem barra no final
+
+Teste local (depois de preencher o `.env`):
+
+```bash
+php artisan r2:ping
+```
+
+## Cloudflare R2
+
+O R2 não usa ACL por arquivo (`public-read` quebra o upload). Os arquivos ficam públicos pelo **r2.dev** (ou domínio próprio), não pela visibilidade do Flysystem.
+
+1. Painel: [R2 Object Storage](https://dash.cloudflare.com/?to=/:account/r2/overview) → **Create bucket** → nome `echevia-media` (jurisdição default, classe Standard).
+2. Abra o bucket → **Settings** → **Public Development URL** → **Enable** → digite `allow`. Copie `https://pub-….r2.dev` (sem barra no final).
+3. No mesmo **Settings** → **CORS Policy** → cole o JSON abaixo.
+4. Volte em **R2** → **API Tokens** → **Manage** → **Create Account API token** → permissão **Object Read & Write**, Apply to specific buckets → só `echevia-media`.
+5. Copie **Access Key ID**, **Secret Access Key** e o **Account ID** (sidebar). O secret só aparece uma vez. O endpoint S3 é `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+
+CORS do bucket:
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "https://marketingcriativa.com.br",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173"
+    ],
+    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+O `r2.dev` é limitado e pensado para desenvolvimento. Depois dá para ligar um subdomínio na Cloudflare. As chaves ficam só no `.env` da API, nunca no frontend.
 
 ## Endpoints
 
