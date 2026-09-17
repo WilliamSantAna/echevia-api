@@ -161,6 +161,19 @@ class PlantTest extends TestCase
             ->assertJsonPath('photos.0.id', 'lola-1');
     }
 
+    public function test_reports_r2_storage_usage(): void
+    {
+        Storage::disk('r2')->put('plants/photo/a.jpg', str_repeat('x', 2048));
+        Storage::disk('r2')->put('plants/video/a.mp4', str_repeat('y', 4096));
+
+        $this->postJson('/api/plants', $this->plantPayload())->assertCreated();
+
+        $this->getJson('/api/storage')
+            ->assertOk()
+            ->assertJsonPath('usedBytes', 6144)
+            ->assertJsonPath('limitBytes', 10737418240);
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

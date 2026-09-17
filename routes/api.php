@@ -11,6 +11,8 @@ Route::post('/identify', IdentifyController::class)
 Route::post('/media', [MediaController::class, 'store'])
     ->middleware('throttle:30,1');
 
+Route::get('/storage', [PlantController::class, 'storage']);
+
 Route::get('/plants', [PlantController::class, 'index']);
 Route::post('/plants', [PlantController::class, 'store'])->middleware('throttle:60,1');
 Route::get('/plants/{plant}', [PlantController::class, 'show']);

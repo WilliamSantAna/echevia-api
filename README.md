@@ -95,5 +95,6 @@ O `r2.dev` é limitado e pensado para desenvolvimento. Depois dá para ligar um 
 | POST | `/api/plants/{id}/favorite` | `{ "favorite": true }` |
 | POST | `/api/plants/{id}/delete` | Remove planta e arquivos do R2 |
 | POST | `/api/media` | Multipart `file` + `kind=photo\|video`. Grava no R2 e devolve `{ "url", "key" }` |
+| GET | `/api/storage` | Uso do R2 em bytes (`{ "usedBytes", "limitBytes" }`, limite 10GB) |
 
 A chave da PlantNet não sai no frontend.
