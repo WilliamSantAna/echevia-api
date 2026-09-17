@@ -22,7 +22,7 @@ class UpsertPlantRequest extends FormRequest
         $ignoreId = $plant instanceof Plant ? $plant->id : null;
 
         return [
-            'id' => ['nullable', 'uuid'],
+            'id' => ['nullable', 'string', 'max:36'],
             'name' => ['required', 'string', 'max:255'],
             'species' => ['nullable', 'string', 'max:255'],
             'botanicalFamily' => ['nullable', 'string', 'max:255'],
@@ -38,12 +38,12 @@ class UpsertPlantRequest extends FormRequest
             'createdAt' => ['nullable', 'date'],
             'updatedAt' => ['nullable', 'date'],
             'photos' => ['present', 'array', 'max:6'],
-            'photos.*.id' => ['nullable', 'uuid'],
+            'photos.*.id' => ['nullable', 'string', 'max:36'],
             'photos.*.url' => ['required', 'string', 'max:2048'],
             'photos.*.isMain' => ['sometimes', 'boolean'],
             'photos.*.key' => ['nullable', 'string', 'max:512'],
             'videos' => ['present', 'array', 'max:1'],
-            'videos.*.id' => ['nullable', 'uuid'],
+            'videos.*.id' => ['nullable', 'string', 'max:36'],
             'videos.*.url' => ['required', 'string', 'max:2048'],
             'videos.*.posterUrl' => ['nullable', 'string', 'max:2048'],
             'videos.*.durationSeconds' => ['nullable', 'integer', 'min:0', 'max:120'],

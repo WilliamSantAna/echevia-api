@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Plant extends Model
 {
-    use HasUuids;
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
@@ -42,6 +44,12 @@ class Plant extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (Plant $plant) {
+            if (empty($plant->id)) {
+                $plant->id = (string) Str::uuid();
+            }
+        });
+
         static::deleting(function (Plant $plant) {
             $plant->loadMissing(['photos', 'videos']);
 

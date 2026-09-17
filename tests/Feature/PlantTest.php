@@ -141,6 +141,26 @@ class PlantTest extends TestCase
         $this->assertDatabaseCount('plants', 0);
     }
 
+    public function test_accepts_legacy_seed_ids(): void
+    {
+        $this->postJson('/api/plants', $this->plantPayload([
+            'id' => 'plant-lola',
+            'identification' => 'ECH-LOLA-SEED',
+            'photos' => [
+                [
+                    'id' => 'lola-1',
+                    'url' => '/echevia/mock/echeveria-pot.jpg',
+                    'isMain' => true,
+                ],
+            ],
+            'videos' => [],
+        ]))->assertCreated()->assertJsonPath('id', 'plant-lola');
+
+        $this->getJson('/api/plants/plant-lola')
+            ->assertOk()
+            ->assertJsonPath('photos.0.id', 'lola-1');
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

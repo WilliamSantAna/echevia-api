@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class PlantPhoto extends Model
 {
-    use HasUuids;
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
@@ -30,6 +32,15 @@ class PlantPhoto extends Model
     public function plant(): BelongsTo
     {
         return $this->belongsTo(Plant::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (PlantPhoto $photo) {
+            if (empty($photo->id)) {
+                $photo->id = (string) Str::uuid();
+            }
+        });
     }
 
     public function deleteStoredObject(): void
