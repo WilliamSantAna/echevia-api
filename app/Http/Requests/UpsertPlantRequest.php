@@ -46,7 +46,7 @@ class UpsertPlantRequest extends FormRequest
             'videos.*.id' => ['nullable', 'string', 'max:36'],
             'videos.*.url' => ['required', 'string', 'max:2048'],
             'videos.*.posterUrl' => ['nullable', 'string', 'max:2048'],
-            'videos.*.durationSeconds' => ['nullable', 'integer', 'min:0', 'max:120'],
+            'videos.*.durationSeconds' => ['nullable', 'integer', 'min:0', 'max:30'],
             'videos.*.key' => ['nullable', 'string', 'max:512'],
             'videos.*.posterKey' => ['nullable', 'string', 'max:512'],
         ];

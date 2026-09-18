@@ -12,12 +12,15 @@ class MediaController extends Controller
 {
     public function store(Request $request, MediaService $media): JsonResponse
     {
+        $maxKb = $request->input('kind') === 'photo' ? 10240 : 20480;
         $validated = $request->validate([
-            'file' => ['required', 'file', 'max:20480'],
             'kind' => ['required', 'in:photo,video'],
+            'file' => ['required', 'file', 'max:'.$maxKb],
         ], [
             'file.required' => 'Envie um arquivo.',
-            'file.max' => 'O arquivo pode ter no máximo 20 MB.',
+            'file.max' => $request->input('kind') === 'photo'
+                ? 'A foto pode ter no máximo 10 MB.'
+                : 'O arquivo pode ter no máximo 20 MB.',
             'kind.in' => 'O tipo precisa ser photo ou video.',
         ]);
 

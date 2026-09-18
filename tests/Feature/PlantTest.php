@@ -161,6 +161,33 @@ class PlantTest extends TestCase
             ->assertJsonPath('photos.0.id', 'lola-1');
     }
 
+    public function test_rejects_photo_larger_than_10mb(): void
+    {
+        $file = UploadedFile::fake()->create('huge.jpg', 10241, 'image/jpeg');
+
+        $this->post('/api/media', [
+            'file' => $file,
+            'kind' => 'photo',
+        ], ['Accept' => 'application/json'])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'A foto pode ter no máximo 10 MB.');
+    }
+
+    public function test_rejects_video_duration_over_30_seconds(): void
+    {
+        $this->postJson('/api/plants', $this->plantPayload([
+            'videos' => [
+                [
+                    'id' => 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+                    'url' => 'https://r2.test/plants/video/a.mp4',
+                    'posterUrl' => 'https://r2.test/plants/photo/a.jpg',
+                    'durationSeconds' => 31,
+                    'key' => 'plants/video/a.mp4',
+                ],
+            ],
+        ]))->assertUnprocessable();
+    }
+
     public function test_reports_r2_storage_usage(): void
     {
         Storage::disk('r2')->put('plants/photo/a.jpg', str_repeat('x', 2048));
